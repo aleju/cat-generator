@@ -74,7 +74,7 @@ function main()
     if OPT.aws then
         DATASET.setDirs({"/mnt/datasets/out_aug_64x64"})
     else
-        DATASET.setDirs({"../vec2cat/dataset/out_aug_64x64"})
+        DATASET.setDirs({"dataset/out_aug_64x64"})
     end
     ----------------------------------------------------------------------
     

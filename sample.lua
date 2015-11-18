@@ -14,7 +14,7 @@ OPT = lapp[[
     --D_base        (default "adversarial.net")               Filename for the 32x32 base network to load D from.
     --neighbours                                              Whether to search for nearest neighbours of generated images in the dataset (takes long)
     --scale         (default 32)                              Height of images in the base network.
-    --colorSpace       (default "rgb")                        rgb|yuv|hsl|y
+    --colorSpace    (default "rgb")                           rgb|yuv|hsl|y
     --writeto       (default "samples")                       Directory to save the images to
     --seed          (default 1)                               Random number seed to use.
     --gpu           (default 0)                               GPU to run on
@@ -62,7 +62,7 @@ DATASET.setWidth(OPT.scale)
 if OPT.aws then
     DATASET.setDirs({"/mnt/datasets/out_aug_64x64"})
 else
-    DATASET.setDirs({"../vec2cat/dataset/out_aug_64x64"})
+    DATASET.setDirs({"dataset/out_aug_64x64"})
 end
 
 -- Main function that runs the sampling
