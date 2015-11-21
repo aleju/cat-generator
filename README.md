@@ -17,7 +17,7 @@ The difference between model G32up and G32up-c is simply that G32up-c is about o
 
 ## Model G32up-c (currently default)
 
-![256 random color images](images/random_color_256_g32upc.jpg.jpg?raw=true "256 random color images")
+![256 random color images](images/random_color_256_g32upc.jpg?raw=true "256 random color images")
 
 *256 randomly generated 32x32 cat images. (Model G32up-c)*
 
@@ -29,7 +29,7 @@ The difference between model G32up and G32up-c is simply that G32up-c is about o
 
 *16 generated images (each pair left) and their nearest neighbours from the training set (each pair right). Distance was measured by 2-Norm (`torch.dist()`). The 16 selected images were the "best" ones among 1024 images according to the rating by D, hence some similarity with the training set is expected. (Model G32up-c)*
 
-[![Training progress video](images/youtube-embedded-image.jpg?raw=true)](https://youtu.be/JRBscukr7ew)
+[![Training progress video](images/youtube-embedded-image-g32upc.jpg?raw=true)](https://youtu.be/JRBscukr7ew)
 
 *Training progress of the network while learning to generate color images. Epoch 1 to 750 as a [youtube video](https://youtu.be/JRBscukr7ew). (Model G32up-c)*
 
