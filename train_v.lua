@@ -205,9 +205,7 @@ function epoch()
         os.execute(string.format("mkdir -p %s", sys.dirname(filename)))
         print(string.format("<trainer> saving network to %s", filename))
         
-        -- apparently something in the OPTSTATE is a CudaTensor, so saving it and then loading
-        -- in CPU mode would cause an error
-        --torch.save(filename, {V=NN_UTILS.deactivateCuda(V), opt=OPT, EPOCH=EPOCH+1}) --, optstate=OPTSTATE
+        NN_UTILS.prepareNetworkForSave(V)
         torch.save(filename, {V=V, opt=OPT, EPOCH=EPOCH+1})
     end
     

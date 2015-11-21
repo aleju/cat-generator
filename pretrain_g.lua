@@ -89,7 +89,7 @@ function main()
     print("G autoencoder:")
     print(G_AUTOENCODER)
     print(string.format('Number of free parameters in G (total): %d', NN_UTILS.getNumberOfParameters(G_AUTOENCODER)))
-    if OPT.gpu ~= false then
+    if OPT.gpu == false then
         print(string.format('... encoder: %d', NN_UTILS.getNumberOfParameters(G_AUTOENCODER:get(1))))
         print(string.format('... decoder: %d', NN_UTILS.getNumberOfParameters(G_AUTOENCODER:get(2))))
     else
@@ -204,6 +204,7 @@ function epoch()
         print(string.format("<trainer> saving network to %s", filename))
         
         -- Clone the autoencoder and deactivate cuda mode
+        NN_UTILS.prepareNetworkForSave(G_AUTOENCODER)
         local G2 = G_AUTOENCODER:clone()
         G2:float()
         G2 = NN_UTILS.deactivateCuda(G2)

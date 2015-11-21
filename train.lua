@@ -130,7 +130,7 @@ function main()
         MODEL_D = tmp.D
         MODEL_G = tmp.G
         OPTSTATE = tmp.optstate
-        EPOCH = tmp.epoch
+        EPOCH = tmp.epoch + 1
         if NORMALIZE then
             NORMALIZE_MEAN = tmp.normalize_mean
             NORMALIZE_STD = tmp.normalize_std
@@ -255,7 +255,9 @@ function saveAs(filename)
       os.execute(string.format("mv %s %s.old", filename, filename))
     end
     print(string.format("<trainer> saving network to %s", filename))
-    torch.save(filename, {D = MODEL_D, G = MODEL_G, opt = OPT, plot_data = PLOT_DATA, epoch = EPOCH+1, normalize_mean=NORMALIZE_MEAN, normalize_std=NORMALIZE_STD})
+    NN_UTILS.prepareNetworkForSave(MODEL_G)
+    NN_UTILS.prepareNetworkForSave(MODEL_D)
+    torch.save(filename, {D = MODEL_D, G = MODEL_G, opt = OPT, plot_data = PLOT_DATA, epoch = EPOCH, normalize_mean=NORMALIZE_MEAN, normalize_std=NORMALIZE_STD})
 end
 
 main()
