@@ -69,6 +69,7 @@ Note that this training methodology is similar to how one would naturally paint 
   * `optim` (`luarocks install optim`)
   * `cutorch` (`luarocks install cutorch`)
   * `cunn` (`luarocks install cunn`)
+  * `cudnn` (`luarocks install cudnn`)
   * `dpnn` (`luarocks install dpnn`)
   * `stn` ([see here](https://github.com/qassemoquab/stnbhwd))
   * [display](https://github.com/szym/display)
