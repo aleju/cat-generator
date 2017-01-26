@@ -115,7 +115,7 @@ Preperation steps:
 * Switch to the repository's subdirectory `dataset` via `cd dataset` and convert your downloaded cat images into a normalized and augmented set of ~100k cat faces with `python generate_dataset.py --path="/foo/bar"`. This may take a good two hours or so to run through, as it performs lots of augmentations.
 
 Training and Sampling:
-* Start display with `~/.display/run.js &`
+* Start display with `th -ldisplay.start`
 * Open `http://localhost:8000/` in your browser (plotting interface by display).
 * Train V for a few epochs with `th train_v.lua`. (Wait for a `saving network to <path>` message, then stop manually.)
 * Pretrain G for a few epochs with `th pretrain_g.lua`. (Wait for a `saving network to <path>` message, then stop manually.) (This step can be skipped.)

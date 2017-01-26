@@ -32,7 +32,7 @@ function adversarial.train(trainData, maxAccuracyD, accsInterval)
     end
     local dataBatchSize = OPT.batchSize / 2 -- size of a half-batch for D or G
     local time = sys.clock()
-    
+
     -- variables to track D's accuracy and adjust learning rates
     local lastAccuracyD = 0.0
     local doTrainD = true
@@ -40,7 +40,7 @@ function adversarial.train(trainData, maxAccuracyD, accsInterval)
     local countNotTrainedD = 0
     local count_lr_increased_D = 0
     local count_lr_decreased_D = 0
-    
+
     samples = nil
     local batchIdx = 0
 
@@ -51,15 +51,15 @@ function adversarial.train(trainData, maxAccuracyD, accsInterval)
     for t = 1,N_epoch,dataBatchSize do
         -- size of this batch, will usually be dataBatchSize but can be lower at the end
         local thisBatchSize = math.min(OPT.batchSize, N_epoch - t + 1)
-        
+
         -- Inputs for D, either original or generated images
-        local inputs = torch.Tensor(thisBatchSize, IMG_DIMENSIONS[1], IMG_DIMENSIONS[2], IMG_DIMENSIONS[3])
-        
+        local inputs = torch.zeros(thisBatchSize, IMG_DIMENSIONS[1], IMG_DIMENSIONS[2], IMG_DIMENSIONS[3]):float()
+
         -- target y-values
-        local targets = torch.Tensor(thisBatchSize)
-        
+        local targets = torch.zeros(thisBatchSize):float()
+
         -- tensor to use for noise for G
-        local noiseInputs = torch.Tensor(thisBatchSize, OPT.noiseDim)
+        local noiseInputs = torch.zeros(thisBatchSize, OPT.noiseDim):float()
         
         -- this script currently can't handle small sized batches
         if thisBatchSize < 4 then
@@ -84,7 +84,7 @@ function adversarial.train(trainData, maxAccuracyD, accsInterval)
             local outputs = MODEL_D:forward(inputs)
             local f = CRITERION:forward(outputs, targets)
 
-            -- backward pass 
+            -- backward pass
             local df_do = CRITERION:backward(outputs, targets)
             MODEL_D:backward(inputs, df_do)
 
@@ -114,7 +114,7 @@ function adversarial.train(trainData, maxAccuracyD, accsInterval)
             -- Calculate accuracy of D on this batch
             confusion_batch_D:updateValids()
             local tV = confusion_batch_D.totalValid
-            
+
             -- this old code would keep the accuracy of D at around 90% by adjusting learning rates
             --[[
             if EPOCH > 1 then
@@ -134,21 +134,21 @@ function adversarial.train(trainData, maxAccuracyD, accsInterval)
                     OPTSTATE.adam.D.learningRate = OPTSTATE.adam.D.learningRate * 1.001
                 end
             end
-            
+
             OPTSTATE.adam.D.learningRate = math.max(0.00001, OPTSTATE.adam.D.learningRate)
             OPTSTATE.adam.D.learningRate = math.min(0.001, OPTSTATE.adam.D.learningRate)
             --]]
-            
+
             -- Add this batch's accuracy to the history of D's accuracies
             -- Also, keep that history to a fixed size
             adversarial.accs[#adversarial.accs+1] = tV
             if #adversarial.accs > accsInterval then
                 table.remove(adversarial.accs, 1)
             end
-            
+
             -- Mean accuracy of D over the last couple of batches
             local accAvg = adversarial.mean(adversarial.accs)
-            
+
             -- We will only train D if its mean accuracy over the last couple of batches
             -- was below the defined maximum (maxAccuracyD). This protects a bit against
             -- G generating garbage.
@@ -159,7 +159,7 @@ function adversarial.train(trainData, maxAccuracyD, accsInterval)
                 return f,GRAD_PARAMETERS_D
             else
                 countNotTrainedD = countNotTrainedD + 1
-                
+
                 -- The interruptable* Optimizers dont train when false is returned
                 -- Maybe that would be equivalent to just returning 0 for all gradients?
                 return false,false
@@ -167,7 +167,7 @@ function adversarial.train(trainData, maxAccuracyD, accsInterval)
         end
 
         ----------------------------------------------------------------------
-        -- create closure to evaluate f(X) and df/dX of generator 
+        -- create closure to evaluate f(X) and df/dX of generator
         local fevalG_on_D = function(x)
             collectgarbage()
             if x ~= PARAMETERS_G then -- get new parameters
@@ -219,7 +219,7 @@ function adversarial.train(trainData, maxAccuracyD, accsInterval)
         -- (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
         -- Get half a minibatch of real, half fake
         for k=1, OPT.D_iterations do
-            -- (1.1) Real data 
+            -- (1.1) Real data
             local inputIdx = 1
             local realDataSize = thisBatchSize / 2
             for i = 1, realDataSize do
@@ -236,7 +236,7 @@ function adversarial.train(trainData, maxAccuracyD, accsInterval)
                 targets[inputIdx] = Y_GENERATOR
                 inputIdx = inputIdx + 1
             end
-            
+
             if OPT.D_optmethod == "sgd" then
                 optim.sgd(fevalD, PARAMETERS_D, OPTSTATE.sgd.D)
             elseif OPT.D_optmethod == "adagrad" then
@@ -253,7 +253,7 @@ function adversarial.train(trainData, maxAccuracyD, accsInterval)
         for k=1, OPT.G_iterations do
             noiseInputs = NN_UTILS.createNoiseInputs(noiseInputs:size(1))
             targets:fill(Y_NOT_GENERATOR)
-            
+
             if OPT.G_optmethod == "sgd" then
                 optim.sgd(fevalG_on_D, PARAMETERS_G, OPTSTATE.sgd.G)
             elseif OPT.G_optmethod == "adagrad" then
@@ -268,7 +268,7 @@ function adversarial.train(trainData, maxAccuracyD, accsInterval)
         batchIdx = batchIdx + 1
         -- display progress
         xlua.progress(t+thisBatchSize, N_epoch)
-        
+
         if OPT.weightsVisFreq > 0 and batchIdx % OPT.weightsVisFreq == 0 then
             adversarial.visualizeNetwork(MODEL_D)
         end
@@ -308,10 +308,10 @@ function adversarial.visualizeNetwork(net, minOutputs)
     if minOutputs == nil then
         minOutputs = 150
     end
-    
+
     -- (Global) Table to save the window ids in, so that we can reuse them between calls.
     netvis_windows = netvis_windows or {}
-    
+
     local modules = net:listModules()
     local winIdx = 1
     -- last module seems to have no output?
@@ -325,13 +325,13 @@ function adversarial.visualizeNetwork(net, minOutputs)
             local output = modules[i].output
             local shape = output:size()
             local nbValues = shape[2]
-            
+
             if nbValues >= minOutputs and nbValues >= minOutputs then
                 local nbRows = torch.floor(torch.sqrt(nbValues))
                 while nbValues % nbRows ~= 0 and nbRows < nbValues do
                     nbRows = nbRows + 1
                 end
-                
+
                 if nbRows >= nbValues then
                     showTensor = nil
                 else
@@ -339,7 +339,7 @@ function adversarial.visualizeNetwork(net, minOutputs)
                 end
             end
         end
-        
+
         -- Show the layer outputs in a window
         -- Note that windows are reused if possible
         if showTensor ~= nil then
